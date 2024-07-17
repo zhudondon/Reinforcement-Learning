@@ -17,21 +17,36 @@ class QL:
             action = np.random.choice(action_list[action_list == np.max(action_list)].index)    #选出当前observation中Q值最大的方向
         else:
             action = np.random.choice(self.actions)      #如果不在epsilon内，则随机选择一个动作
+        print("\n")
+        print("选择了方向：",action)
+        print("\n")
         return action                                    #返回应当做的action
 
     def learn(self,observation_now,action,score,observation_after,done):
         self.check_observation(observation_after)        #检查是否存在下一环境对应的方向状态
         q_predict = self.q_table.loc[observation_now,action]        #获得当前状态下，当前所作动作所对应的预测得分
+        after__max = None
         if done:
             q_target = score     #如果完成了则q_target为下一个环境的实际情况得分，本例子中此时score为1
         else:
-            q_target = score + self.gamma * self.q_table.loc[observation_after, :].max()  #如果未完成则取下一个环境若干个动作中的最大得分作为这个环境的价值传递给当前环境
+            after__max = self.q_table.loc[observation_after, :].max()
+            q_target = score + self.gamma * after__max  #如果未完成则取下一个环境若干个动作中的最大得分作为这个环境的价值传递给当前环境
         #根据所处的当前环境对各个动作的预测得分和下一步的环境的实际情况更新当前环境的q表
-        self.q_table.loc[observation_now, action] += self.lr * (q_target - q_predict)  
+        print("\n")
+        print("当前真实值取值 : ",q_target)
+        print("当前预测取值 : ",q_predict)
+        print("最大值 : ",after__max)
+        print("table信息 : \n" , self.q_table)
+        print("\n")
+        print("当前值旧值：",self.q_table.loc[observation_now, action])
+        print("当前差值：",(q_target - q_predict))
+        print("\n")
+        self.q_table.loc[observation_now, action] += self.lr * (q_target - q_predict)
+
 
     def check_observation(self,observation):
         if observation not in self.q_table.index:               #如果不存在 
-            self.q_table = self.q_table.append(                 #则通过series函数生成新的一列
+            self.q_table = self.q_table._append(                 #则通过series函数生成新的一列
                 pd.Series(
                     [0]*len(self.actions),
                     index=self.actions,

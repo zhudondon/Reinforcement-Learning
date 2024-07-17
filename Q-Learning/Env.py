@@ -1,6 +1,5 @@
 import numpy as np
-import pandas as pd
-import time 
+
 
 class Env:
     def __init__(self,column,maze_column):
@@ -57,7 +56,7 @@ class Env:
         elif action == 'left':   #left
             if self.x - 1 == self.maze_column:
                 score = 1
-                pre_done = Ture
+                pre_done = True
             else:
                 score = 0
                 pre_done = False

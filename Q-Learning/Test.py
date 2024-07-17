@@ -1,7 +1,7 @@
+import time
+
 from Env import Env
 from QL import QL
-import numpy as np
-import time
 
 LONG = 6                    #总长度为6
 MAZE_PLACE = 6              #宝藏在第6位
